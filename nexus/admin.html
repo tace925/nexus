@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus - Admin Dashboard</title>
+    <link rel="stylesheet" href="nexus.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="light-mode">
+    <div class="nexus-bg"></div>
+    <div class="nexus-particles"></div>
+    
+    <div class="nexus-container">
+        <div class="nexus-header">
+            <div class="nexus-logo-header">
+                <img src="tev.jpg" alt="Nexus Logo" class="nexus-logo-img" onerror="this.style.display='none'">
+                <span class="logo-icon" style="display: none;">📚💻</span>
+                <h1>NEXUS<span class="accent">ADMIN</span></h1>
+            </div>
+            <div class="nexus-nav">
+                <a href="index.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+                <a href="bookshop.html"><i class="fas fa-book"></i> Bookshop</a>
+                <a href="cyber.html"><i class="fas fa-print"></i> Cyber</a>
+                <a href="admin.html"><i class="fas fa-shield-alt"></i> Admin</a>
+                <a href="sales.html"><i class="fas fa-cash-register"></i> Sales</a>
+                <a href="invoice.html"><i class="fas fa-file-invoice"></i> Invoices</a>
+                <a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a>
+                <a href="customers.html"><i class="fas fa-users"></i> Customers</a>
+                <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+            </div>
+            <div class="nexus-actions">
+                <button id="theme-toggle" class="theme-toggle">
+                    <i class="fas fa-sun light-icon"></i>
+                    <i class="fas fa-moon dark-icon"></i>
+                </button>
+                <button onclick="logout()" class="logout-btn"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </div>
+        
+        <!-- Welcome Card -->
+        <div class="dashboard-card" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, var(--accent)15, var(--bg-secondary));">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h2 style="margin-bottom: 0.5rem;">Welcome back, Admin</h2>
+                    <p style="color: var(--text-tertiary);">Manage your entire business from one central dashboard</p>
+                </div>
+                <div style="background: var(--accent); padding: 0.5rem 1rem; border-radius: 50px;">
+                    <i class="fas fa-shield-alt"></i> Super Admin Access
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-store"></i></div>
+                <div class="stat-info">
+                    <h3>2</h3>
+                    <p>Active Modules</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-info">
+                    <h3 id="totalCustomers">0</h3>
+                    <p>Total Customers</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                <div class="stat-info">
+                    <h3 id="totalRevenue">KES 0</h3>
+                    <p>Total Revenue</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-calendar"></i></div>
+                <div class="stat-info">
+                    <h3>Mar 2024</h3>
+                    <p>Current Period</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Admin Actions Grid -->
+        <h2 style="margin: 2rem 0 1rem 0;">Quick Admin Actions</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+            
+            <div class="dashboard-card" style="text-align: center; cursor: pointer;" onclick="showAdminModal('User Management')">
+                <i class="fas fa-user-cog" style="font-size: 2.5rem; color: var(--accent); margin-bottom: 1rem; display: inline-block;"></i>
+                <h3>User Management</h3>
+                <p style="color: var(--text-tertiary);">Manage admin users and permissions</p>
+                <span style="display: inline-block; margin-top: 0.5rem; color: var(--accent);">Manage →</span>
+            </div>
+            
+            <div class="dashboard-card" style="text-align: center; cursor: pointer;" onclick="showAdminModal('Database Backup')">
+                <i class="fas fa-database" style="font-size: 2.5rem; color: var(--accent); margin-bottom: 1rem; display: inline-block;"></i>
+                <h3>Database Backup</h3>
+                <p style="color: var(--text-tertiary);">Backup and restore your data</p>
+                <span style="display: inline-block; margin-top: 0.5rem; color: var(--accent);">Backup →</span>
+            </div>
+            
+            <div class="dashboard-card" style="text-align: center; cursor: pointer;" onclick="showAdminModal('System Logs')">
+                <i class="fas fa-history" style="font-size: 2.5rem; color: var(--accent); margin-bottom: 1rem; display: inline-block;"></i>
+                <h3>System Logs</h3>
+                <p style="color: var(--text-tertiary);">View all system activities</p>
+                <span style="display: inline-block; margin-top: 0.5rem; color: var(--accent);">View →</span>
+            </div>
+            
+            <div class="dashboard-card" style="text-align: center; cursor: pointer;" onclick="showAdminModal('Email Settings')">
+                <i class="fas fa-envelope" style="font-size: 2.5rem; color: var(--accent); margin-bottom: 1rem; display: inline-block;"></i>
+                <h3>Email Settings</h3>
+                <p style="color: var(--text-tertiary);">Configure email notifications</p>
+                <span style="display: inline-block; margin-top: 0.5rem; color: var(--accent);">Configure →</span>
+            </div>
+        </div>
+        
+        <!-- Module Management Section -->
+        <h2 style="margin: 2rem 0 1rem 0;">Business Modules</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+            
+            <!-- Bookshop Module Card -->
+            <div class="dashboard-card">
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                    <div style="background: linear-gradient(135deg, var(--accent), var(--gold)); width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-book" style="color: white; font-size: 1.2rem;"></i>
+                    </div>
+                    <div>
+                        <h3 style="margin: 0;">Bookshop Module</h3>
+                        <p style="color: var(--text-tertiary); margin: 0;">Inventory & Sales</p>
+                    </div>
+                    <div style="margin-left: auto;">
+                        <span style="background: #10b98120; color: #10b981; padding: 4px 12px; border-radius: 20px;">Active</span>
+                    </div>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                        <span>Total Products</span>
+                        <strong id="moduleTotalProducts">0</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                        <span>Low Stock Items</span>
+                        <strong id="moduleLowStock">0</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                        <span>Monthly Sales</span>
+                        <strong id="moduleBookSales">KES 0</strong>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn-primary" style="flex: 1;" onclick="location.href='bookshop.html'">Manage</button>
+                    <button class="btn-outline" style="flex: 1;" onclick="showModuleSettings('Bookshop')">Settings</button>
+                </div>
+            </div>
+            
+            <!-- Cyber Module Card -->
+            <div class="dashboard-card">
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                    <div style="background: linear-gradient(135deg, var(--accent), var(--gold)); width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-print" style="color: white; font-size: 1.2rem;"></i>
+                    </div>
+                    <div>
+                        <h3 style="margin: 0;">Cyber Services Module</h3>
+                        <p style="color: var(--text-tertiary); margin: 0;">Printing & Internet</p>
+                    </div>
+                    <div style="margin-left: auto;">
+                        <span style="background: #10b98120; color: #10b981; padding: 4px 12px; border-radius: 20px;">Active</span>
+                    </div>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                        <span>Active Sessions</span>
+                        <strong id="moduleActiveSessions">0</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                        <span>Today's Prints</span>
+                        <strong>234</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                        <span>Monthly Revenue</span>
+                        <strong id="moduleCyberRevenue">KES 0</strong>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn-primary" style="flex: 1;" onclick="location.href='cyber.html'">Manage</button>
+                    <button class="btn-outline" style="flex: 1;" onclick="showModuleSettings('Cyber')">Settings</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- System Status & Recent Activity -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem;">
+            
+            <!-- System Status Card -->
+            <div class="dashboard-card">
+                <h3>🖥️ System Status</h3>
+                <div style="margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span>Database Connection</span>
+                        <span style="color: #10b981;"><i class="fas fa-check-circle"></i> Connected</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span>API Status</span>
+                        <span style="color: #10b981;"><i class="fas fa-check-circle"></i> Operational</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span>Last Backup</span>
+                        <span>2024-03-28 02:00 AM</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Server Uptime</span>
+                        <span>99.9% (30 days)</span>
+                    </div>
+                </div>
+                <button class="btn-primary" style="width: 100%;" onclick="showAdminModal('System Status Check')">Run Diagnostics</button>
+            </div>
+            
+            <!-- Recent Admin Activity Card -->
+            <div class="dashboard-card">
+                <h3>📋 Recent Admin Activity</h3>
+                <div class="activity-item">
+                    <i class="fas fa-user-plus"></i>
+                    <span>New admin user added</span>
+                    <small>2 hours ago</small>
+                </div>
+                <div class="activity-item">
+                    <i class="fas fa-database"></i>
+                    <span>Database backup completed</span>
+                    <small>Yesterday</small>
+                </div>
+                <div class="activity-item">
+                    <i class="fas fa-sliders-h"></i>
+                    <span>Cyber rates updated</span>
+                    <small>Yesterday</small>
+                </div>
+                <div class="activity-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Monthly report generated</span>
+                    <small>2 days ago</small>
+                </div>
+                <a href="#" class="view-all">View All Logs →</a>
+            </div>
+        </div>
+        
+        <!-- User Management Table -->
+        <div class="dashboard-card" style="margin-top: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+                <h3 style="margin: 0;">👥 Admin Users</h3>
+                <button class="btn-primary" onclick="showAddUserModal()"><i class="fas fa-plus"></i> Add Admin User</button>
+            </div>
+            <div class="data-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Last Login</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#001</td>
+                            <td><strong>admin</strong></td>
+                            <td>admin@nexus.com</td>
+                            <td><span style="background: var(--accent)20; color: var(--accent); padding: 4px 12px; border-radius: 20px;">Super Admin</span></td>
+                            <td>2024-03-28 09:30 AM</td>
+                            <td><span style="background: #10b98120; color: #10b981; padding: 4px 12px; border-radius: 20px;">Active</span></td>
+                            <td><i class="fas fa-edit" style="cursor: pointer; margin-right: 8px; color: var(--accent);"></i><i class="fas fa-lock" style="cursor: pointer; color: var(--accent);"></i></td>
+                        </tr>
+                        <tr>
+                            <td>#002</td>
+                            <td><strong>manager1</strong></td>
+                            <td>manager@nexus.com</td>
+                            <td><span style="background: #f59e0b20; color: #f59e0b; padding: 4px 12px; border-radius: 20px;">Manager</span></td>
+                            <td>2024-03-27 02:15 PM</td>
+                            <td><span style="background: #10b98120; color: #10b981; padding: 4px 12px; border-radius: 20px;">Active</span></td>
+                            <td><i class="fas fa-edit" style="cursor: pointer; margin-right: 8px; color: var(--accent);"></i><i class="fas fa-lock" style="cursor: pointer; color: var(--accent);"></i></td>
+                        </tr>
+                        <tr>
+                            <td>#003</td>
+                            <td><strong>staff1</strong></td>
+                            <td>staff@nexus.com</td>
+                            <td><span style="background: #3b82f620; color: #3b82f6; padding: 4px 12px; border-radius: 20px;">Staff</span></td>
+                            <td>2024-03-28 11:00 AM</td>
+                            <td><span style="background: #10b98120; color: #10b981; padding: 4px 12px; border-radius: 20px;">Active</span></td>
+                            <td><i class="fas fa-edit" style="cursor: pointer; margin-right: 8px; color: var(--accent);"></i><i class="fas fa-lock" style="cursor: pointer; color: var(--accent);"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Backup & Restore Section -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+            <div class="dashboard-card">
+                <h3>💾 Database Backup</h3>
+                <p style="color: var(--text-tertiary); margin-bottom: 1rem;">Create a full backup of all your business data</p>
+                <button class="btn-primary" style="width: 100%; margin-bottom: 0.5rem;" onclick="showAdminModal('Backup Started')"><i class="fas fa-database"></i> Create Backup Now</button>
+                <button class="btn-outline" style="width: 100%;" onclick="showAdminModal('Restore Backup')"><i class="fas fa-undo"></i> Restore from Backup</button>
+            </div>
+            
+            <div class="dashboard-card">
+                <h3>📊 Analytics & Reports</h3>
+                <p style="color: var(--text-tertiary); margin-bottom: 1rem;">Generate business performance reports</p>
+                <button class="btn-primary" style="width: 100%; margin-bottom: 0.5rem;" onclick="location.href='reports.html'"><i class="fas fa-chart-bar"></i> View Reports</button>
+                <button class="btn-outline" style="width: 100%;" onclick="showAdminModal('Export Data')"><i class="fas fa-download"></i> Export All Data</button>
+            </div>
+        </div>
+        
+        <!-- Danger Zone -->
+        <div class="dashboard-card" style="margin-top: 1.5rem; border: 1px solid #ef4444;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
+                <i class="fas fa-exclamation-triangle" style="font-size: 1.5rem; color: #ef4444;"></i>
+                <h3 style="margin: 0; color: #ef4444;">System Danger Zone</h3>
+            </div>
+            <p style="color: var(--text-tertiary); margin-bottom: 1.5rem;">These actions can permanently affect your system. Proceed with caution.</p>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <button class="btn-outline" style="border-color: #ef4444; color: #ef4444;" onclick="showClearDataModal()"><i class="fas fa-trash-alt"></i> Clear All Data</button>
+                <button class="btn-outline" style="border-color: #ef4444; color: #ef4444;" onclick="showResetSystemModal()"><i class="fas fa-power-off"></i> Reset System</button>
+                <button class="btn-outline" style="border-color: #ef4444; color: #ef4444;" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+           <!-- DEVELOPER CREDIT - Tevin Mulinge -->
+<div class="developer-credit">
+    <p>© 2024 Nexus Suite | Developed with <span class="heart">❤️</span> by <a href="#" target="_blank">Tevin Mulinge</a></p>
+    <p style="font-size: 0.7rem; margin-top: 0.25rem;">Intelligent Business Management System</p>
+</div>
+        </div>
+    </div>
+    
+    <script src="nexus.js"></script>
+    <script>
+        // Load stats from localStorage on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateAdminStats();
+        });
+        
+        function updateAdminStats() {
+            // Get data from localStorage (set by other pages)
+            const products = JSON.parse(localStorage.getItem('nexus_products') || '[]');
+            const sales = JSON.parse(localStorage.getItem('nexus_sales') || '[]');
+            const customers = JSON.parse(localStorage.getItem('nexus_customers') || '[]');
+            const sessions = JSON.parse(localStorage.getItem('nexus_cyber_sessions') || '[]');
+            
+            // Calculate stats
+            const totalRevenue = sales.reduce((sum, s) => sum + (s.total_amount || 0), 0);
+            const lowStock = products.filter(p => (p.quantity || 0) <= 5).length;
+            const bookSales = sales.filter(s => s.type === 'book').reduce((sum, s) => sum + (s.total_amount || 0), 0);
+            const cyberRevenue = sessions.reduce((sum, s) => sum + (s.total_amount || 0), 0);
+            const activeSessions = sessions.filter(s => s.status === 'active').length;
+            
+            // Update UI
+            document.getElementById('totalCustomers').textContent = customers.length;
+            document.getElementById('totalRevenue').textContent = 'KES ' + totalRevenue.toLocaleString();
+            document.getElementById('moduleTotalProducts').textContent = products.length;
+            document.getElementById('moduleLowStock').textContent = lowStock;
+            document.getElementById('moduleBookSales').textContent = 'KES ' + bookSales.toLocaleString();
+            document.getElementById('moduleCyberRevenue').textContent = 'KES ' + cyberRevenue.toLocaleString();
+            document.getElementById('moduleActiveSessions').textContent = activeSessions;
+        }
+        
+        function showAdminModal(action) {
+            showModal(action, `
+                <p style="text-align: center; padding: 1rem;">${action} feature is ready to be configured.</p>
+                <div class="modal-footer">
+                    <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                    <button class="btn btn-primary" onclick="closeModal()">Proceed</button>
+                </div>
+            `);
+        }
+        
+        function showModuleSettings(module) {
+            showModal(`${module} Module Settings`, `
+                <div class="form-group">
+                    <label>Module Status</label>
+                    <select>
+                        <option>Active</option>
+                        <option>Maintenance Mode</option>
+                        <option>Disabled</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Access Level</label>
+                    <select>
+                        <option>All Staff</option>
+                        <option>Managers Only</option>
+                        <option>Admin Only</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                    <button class="btn btn-primary" onclick="closeModal()">Save Settings</button>
+                </div>
+            `);
+        }
+        
+        function showAddUserModal() {
+            showModal('Add Admin User', `
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" placeholder="Enter username" />
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" placeholder="user@example.com" />
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" placeholder="Enter password" />
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select>
+                        <option>Staff</option>
+                        <option>Manager</option>
+                        <option>Super Admin</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                    <button class="btn btn-primary" onclick="closeModal()">Add User</button>
+                </div>
+            `);
+        }
+        
+        function showClearDataModal() {
+            showModal('⚠️ Clear All Data', `
+                <p style="text-align: center; padding: 1rem;">This will delete ALL products, sales, customers, and settings. This action cannot be undone.</p>
+                <div class="modal-footer">
+                    <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                    <button class="btn btn-primary" style="background: #ef4444;" onclick="clearAllData()">Yes, Clear All Data</button>
+                </div>
+            `);
+        }
+        
+        function clearAllData() {
+            localStorage.removeItem('nexus_products');
+            localStorage.removeItem('nexus_sales');
+            localStorage.removeItem('nexus_customers');
+            localStorage.removeItem('nexus_cyber_sessions');
+            closeModal();
+            alert('All data cleared!');
+            updateAdminStats();
+        }
+        
+        function showResetSystemModal() {
+            showModal('⚠️ Reset System', `
+                <p style="text-align: center; padding: 1rem;">This will reset all settings to default. Your data will remain intact.</p>
+                <div class="modal-footer">
+                    <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                    <button class="btn btn-primary" style="background: #f59e0b;" onclick="closeModal()">Reset System</button>
+                </div>
+            `);
+        }
+    </script>
+</body>
+</html>

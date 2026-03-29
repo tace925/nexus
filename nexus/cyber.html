@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus - Cyber Services</title>
+    <link rel="stylesheet" href="nexus.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="light-mode">
+    <div class="nexus-bg"></div>
+    <div class="nexus-particles"></div>
+    
+    <div class="nexus-container">
+        <div class="nexus-header">
+            <div class="nexus-logo-header"><img src="tev.jpg" alt="Nexus Logo" class="nexus-logo-img" onerror="this.style.display='none'"><h1>NEXUS<span class="accent">CYBER</span></h1></div>
+            <div class="nexus-nav">
+                <a href="index.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+                <a href="bookshop.html"><i class="fas fa-book"></i> Bookshop</a>
+                <a href="cyber.html" class="active"><i class="fas fa-print"></i> Cyber</a>
+                <a href="admin.html"><i class="fas fa-shield-alt"></i> Admin</a>
+                <a href="sales.html"><i class="fas fa-cash-register"></i> Sales</a>
+                <a href="invoice.html"><i class="fas fa-file-invoice"></i> Invoices</a>
+                <a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a>
+                <a href="customers.html"><i class="fas fa-users"></i> Customers</a>
+                <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+            </div>
+            <div class="nexus-actions">
+                <button id="theme-toggle" class="theme-toggle"><i class="fas fa-sun light-icon"></i><i class="fas fa-moon dark-icon"></i></button>
+                <button onclick="logout()" class="logout-btn"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-icon"><i class="fas fa-desktop"></i></div><div class="stat-info"><h3 id="activeSessions">0</h3><p>Active Sessions</p></div></div>
+            <div class="stat-card"><div class="stat-icon"><i class="fas fa-chart-line"></i></div><div class="stat-info"><h3 id="todayRevenue">KES 0</h3><p>Today's Revenue</p></div></div>
+            <div class="stat-card"><div class="stat-icon"><i class="fas fa-users"></i></div><div class="stat-info"><h3 id="totalCustomers">0</h3><p>Total Customers</p></div></div>
+        </div>
+        
+        <div class="dashboard-card" style="margin-bottom: 1.5rem;">
+            <h3>🚀 Start New Session</h3>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;">
+                <input type="text" id="sessionCustomer" placeholder="Customer Name" style="flex: 2; padding: 0.75rem; border-radius: 12px; border: 1px solid var(--border);">
+                <input type="number" id="sessionDuration" placeholder="Duration (minutes)" style="flex: 1; padding: 0.75rem; border-radius: 12px; border: 1px solid var(--border);">
+                <button class="btn-primary" onclick="startSession()">Start Session</button>
+            </div>
+        </div>
+        
+        <div class="dashboard-card">
+            <h3>📋 Session History</h3>
+            <div class="data-table">
+                <table style="width:100%"><thead> <tr><th>Date</th><th>Customer</th><th>Duration</th><th>Amount</th><th>Status</th></tr> </thead>
+                <tbody id="sessionsList"> <tr><td colspan="5" style="text-align:center;">Loading...</td></tr> </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="developer-credit"><p>© 2024 Nexus Suite | Developed with ❤️ by Tevin Mulinge</p></div>
+    </div>
+    
+    <script src="nexus.js"></script>
+    <script>
+        // ==================== LOCAL DATA STORE ====================
+        
+        function getSessions() {
+            return JSON.parse(localStorage.getItem('nexus_cyber_sessions') || '[]');
+        }
+        
+        function saveSessions(sessions) {
+            localStorage.setItem('nexus_cyber_sessions', JSON.stringify(sessions));
+        }
+        
+        function getCustomers() {
+            return JSON.parse(localStorage.getItem('nexus_customers') || '[]');
+        }
+        
+        // ==================== SESSION FUNCTIONS ====================
+        
+        function startSession() {
+            const customerName = document.getElementById('sessionCustomer')?.value;
+            const duration = parseInt(document.getElementById('sessionDuration')?.value);
+            if (!customerName) { alert('Please enter customer name'); return; }
+            if (!duration || duration <= 0) { alert('Please enter valid duration'); return; }
+            
+            const totalAmount = (duration / 60) * 100;
+            const sessionId = 'SES-' + Date.now();
+            
+            try {
+                const sessions = getSessions();
+                const newSession = {
+                    id: Date.now(),
+                    session_id: sessionId,
+                    customer_name: customerName,
+                    duration_minutes: duration,
+                    rate_per_hour: 100,
+                    total_amount: totalAmount,
+                    status: 'active',
+                    created_at: new Date().toISOString()
+                };
+                sessions.push(newSession);
+                saveSessions(sessions);
+                
+                // Also add to customers if new
+                const customers = getCustomers();
+                if (!customers.find(c => c.name === customerName)) {
+                    customers.push({
+                        id: Date.now(),
+                        name: customerName,
+                        email: '',
+                        phone: '',
+                        created_at: new Date().toISOString()
+                    });
+                    localStorage.setItem('nexus_customers', JSON.stringify(customers));
+                }
+                
+                alert(`✅ SESSION STARTED!\n\nCustomer: ${customerName}\nDuration: ${duration} min\nTotal: KES ${totalAmount.toFixed(0)}`);
+                showThankYouModal(sessionId, customerName, duration, totalAmount);
+                document.getElementById('sessionCustomer').value = '';
+                document.getElementById('sessionDuration').value = '';
+                loadSessions();
+                updateStats();
+            } catch (error) { 
+                alert('Error: ' + error.message); 
+            }
+        }
+        
+        function showThankYouModal(id, name, duration, amount) {
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:10001;display:flex;align-items:center;justify-content:center';
+            modal.innerHTML = `<div style="background:var(--bg-secondary);border-radius:24px;padding:30px;max-width:400px;text-align:center"><i class="fas fa-check-circle" style="font-size:4rem;color:#10b981"></i><h2>Session Started!</h2><div style="background:var(--bg-primary);border-radius:12px;padding:1rem;margin:1rem 0"><p><strong>Customer:</strong> ${escapeHtml(name)}</p><p><strong>Duration:</strong> ${duration} min</p><p><strong>Total:</strong> KES ${amount.toFixed(0)}</p></div><button onclick="this.parentElement.parentElement.remove()" style="padding:10px 20px;background:#6B46C1;color:white;border:none;border-radius:8px">Done</button></div>`;
+            document.body.appendChild(modal);
+            setTimeout(() => modal.remove(), 5000);
+        }
+        
+        function loadSessions() {
+            const sessions = getSessions();
+            const tbody = document.getElementById('sessionsList');
+            if (!tbody) return;
+            if (!sessions || sessions.length === 0) { 
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No sessions yet</td></tr>'; 
+                return; 
+            }
+            tbody.innerHTML = sessions.slice().reverse().slice(0, 10).map(s => `<tr><td style="padding:10px;">${new Date(s.created_at).toLocaleDateString()}</td><td style="padding:10px;">${escapeHtml(s.customer_name)}</td><td style="padding:10px;">${s.duration_minutes || '-'} min</td><td style="padding:10px;">KES ${(s.total_amount || 0).toLocaleString()}</td><td style="padding:10px;"><span style="background:${s.status === 'active' ? '#f59e0b20' : '#10b98120'};color:${s.status === 'active' ? '#f59e0b' : '#10b981'};padding:4px 12px;border-radius:20px;">${s.status}</span></td></tr>`).join('');
+        }
+        
+        function updateStats() {
+            const sessions = getSessions();
+            const customers = getCustomers();
+            const today = new Date().toISOString().split('T')[0];
+            
+            const active = sessions.filter(s => s.status === 'active');
+            const todaySessions = sessions.filter(s => s.created_at && s.created_at.startsWith(today));
+            const todayTotal = todaySessions.reduce((s,i) => s + (i.total_amount||0), 0);
+            
+            document.getElementById('activeSessions').textContent = active.length;
+            document.getElementById('todayRevenue').textContent = 'KES ' + todayTotal.toLocaleString();
+            document.getElementById('totalCustomers').textContent = customers.length;
+        }
+        
+        function escapeHtml(str) { 
+            if (!str) return ''; 
+            return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])); 
+        }
+        
+        // Load on page ready
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSessions();
+            updateStats();
+        });
+    </script>
+</body>
+</html>

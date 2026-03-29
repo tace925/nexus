@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus - Settings</title>
+    <link rel="stylesheet" href="nexus.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="light-mode">
+    <div class="nexus-bg"></div>
+    <div class="nexus-particles"></div>
+    
+    <div class="nexus-container">
+        <div class="nexus-header">
+            <div class="nexus-logo-header">
+                <!-- ADD YOUR LOGO IMAGE - Replace 'logo.png' with your actual image filename -->
+                <img src="tev.jpg" alt="Nexus Logo" class="nexus-logo-img" onerror="this.style.display='none'">
+                <span class="logo-icon" style="display: none;">📚💻</span>
+                <h1>NEXUS<span class="accent">SETTINGS</span></h1>
+            </div>
+            <div class="nexus-nav">
+                <a href="index.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+                <a href="bookshop.html"><i class="fas fa-book"></i> Bookshop</a>
+                <a href="cyber.html"><i class="fas fa-print"></i> Cyber</a>
+                <a href="admin.html"><i class="fas fa-shield-alt"></i> Admin</a>
+                <a href="sales.html"><i class="fas fa-cash-register"></i> Sales</a>
+                <a href="invoice.html"><i class="fas fa-file-invoice"></i> Invoices</a>
+                <a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a>
+                <a href="customers.html"><i class="fas fa-users"></i> Customers</a>
+                <a href="settings.html" class="active"><i class="fas fa-cog"></i> Settings</a>
+            </div>
+            <div class="nexus-actions">
+                <button id="theme-toggle" class="theme-toggle">
+                    <i class="fas fa-sun light-icon"></i>
+                    <i class="fas fa-moon dark-icon"></i>
+                </button>
+                <button onclick="logout()" class="logout-btn"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </div>
+        
+        <!-- Settings Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem;">
+            
+            <!-- Business Information Card -->
+            <div class="dashboard-card">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
+                    <i class="fas fa-building" style="font-size: 1.5rem; color: var(--accent);"></i>
+                    <h3 style="margin: 0;">Business Information</h3>
+                </div>
+                <div class="form-group">
+                    <label>Business Name</label>
+                    <input type="text" id="settingBusinessName" value="Nexus Books & Cyber" />
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="settingBusinessEmail" value="info@nexus.co.ke" />
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="settingBusinessPhone" value="+254 700 123456" />
+                </div>
+                <div class="form-group">
+                    <label>Physical Address</label>
+                    <textarea id="settingBusinessAddress" rows="2">Nairobi, Kenya</textarea>
+                </div>
+                <div class="form-group">
+                    <label>Business Hours</label>
+                    <input type="text" id="settingBusinessHours" value="Mon-Sat: 8AM - 8PM, Sun: 10AM - 5PM" />
+                </div>
+                <button class="btn-primary" style="width: 100%;" onclick="saveBusinessInfo()">Save Business Info</button>
+            </div>
+            
+            <!-- Cyber Services Rates Card -->
+            <div class="dashboard-card">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
+                    <i class="fas fa-print" style="font-size: 1.5rem; color: var(--accent);"></i>
+                    <h3 style="margin: 0;">Cyber Services Rates</h3>
+                </div>
+                <div class="form-group">
+                    <label>Internet Access (per hour)</label>
+                    <input type="number" id="rateInternet" value="100" />
+                </div>
+                <div class="form-group">
+                    <label>Computer Rental (per hour)</label>
+                    <input type="number" id="rateComputer" value="150" />
+                </div>
+                <div class="form-group">
+                    <label>Printing - Black & White (per page)</label>
+                    <input type="number" id="ratePrintBW" value="5" />
+                </div>
+                <div class="form-group">
+                    <label>Printing - Color (per page)</label>
+                    <input type="number" id="ratePrintColor" value="20" />
+                </div>
+                <div class="form-group">
+                    <label>Photocopy (per page)</label>
+                    <input type="number" id="ratePhotocopy" value="2" />
+                </div>
+                <div class="form-group">
+                    <label>Scanning (per page)</label>
+                    <input type="number" id="rateScanning" value="30" />
+                </div>
+                <button class="btn-primary" style="width: 100%;" onclick="saveRates()">Update Rates</button>
+            </div>
+            
+            <!-- System Preferences Card -->
+            <div class="dashboard-card">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
+                    <i class="fas fa-sliders-h" style="font-size: 1.5rem; color: var(--accent);"></i>
+                    <h3 style="margin: 0;">System Preferences</h3>
+                </div>
+                <div class="form-group">
+                    <label>Default Currency</label>
+                    <select id="prefCurrency">
+                        <option value="KES">KES - Kenyan Shilling</option>
+                        <option value="USD">USD - US Dollar</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Date Format</label>
+                    <select id="prefDateFormat">
+                        <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                        <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                        <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tax Rate (%)</label>
+                    <input type="number" id="prefTaxRate" value="16" />
+                </div>
+                <div class="form-group">
+                    <label>Invoice Prefix</label>
+                    <input type="text" id="prefInvoicePrefix" value="INV-" />
+                </div>
+                <div class="form-group">
+                    <label>Low Stock Alert Threshold</label>
+                    <input type="number" id="prefLowStock" value="5" />
+                </div>
+                <button class="btn-primary" style="width: 100%;" onclick="savePreferences()">Save Preferences</button>
+            </div>
+            
+            <!-- Notification Settings Card -->
+            <div class="dashboard-card">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
+                    <i class="fas fa-bell" style="font-size: 1.5rem; color: var(--accent);"></i>
+                    <h3 style="margin: 0;">Notifications</h3>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer;">
+                        <input type="checkbox" id="notifLowStock" checked /> Low Stock Alerts
+                    </label>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer;">
+                        <input type="checkbox" id="notifNewSale" checked /> New Sale Notifications
+                    </label>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer;">
+                        <input type="checkbox" id="notifDailySummary" checked /> Daily Sales Summary
+                    </label>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer;">
+                        <input type="checkbox" id="notifEmail" /> Email Reports
+                    </label>
+                </div>
+                <div>
+                    <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer;">
+                        <input type="checkbox" id="notifSMS" /> SMS Alerts
+                    </label>
+                </div>
+                <button class="btn-primary" style="width: 100%; margin-top: 1.5rem;" onclick="saveNotifications()">Save Notification Settings</button>
+            </div>
+        </div>
+        
+        <!-- Appearance Settings Card -->
+        <div class="dashboard-card" style="margin-top: 1.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
+                <i class="fas fa-palette" style="font-size: 1.5rem; color: var(--accent);"></i>
+                <h3 style="margin: 0;">Appearance</h3>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem;">Theme Mode</label>
+                    <select id="appearanceTheme" style="width: 100%; padding: 0.75rem; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-primary);">
+                        <option value="light">Light Mode</option>
+                        <option value="dark">Dark Mode</option>
+                        <option value="system">System Default</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem;">Accent Color</label>
+                    <select id="appearanceAccent" style="width: 100%; padding: 0.75rem; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-primary);">
+                        <option value="purple">Purple</option>
+                        <option value="gold">Gold</option>
+                        <option value="blue">Blue</option>
+                        <option value="green">Green</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem;">Font Size</label>
+                    <select id="appearanceFontSize" style="width: 100%; padding: 0.75rem; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-primary);">
+                        <option value="small">Small</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="large">Large</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn-primary" style="width: 100%; margin-top: 1.5rem;" onclick="saveAppearance()">Save Appearance</button>
+        </div>
+        
+        <!-- Danger Zone -->
+        <div class="dashboard-card" style="margin-top: 1.5rem; border: 1px solid #ef4444;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
+                <i class="fas fa-exclamation-triangle" style="font-size: 1.5rem; color: #ef4444;"></i>
+                <h3 style="margin: 0; color: #ef4444;">System Danger Zone</h3>
+            </div>
+            <p style="color: var(--text-tertiary); margin-bottom: 1.5rem;">These actions can permanently affect your system. Proceed with caution.</p>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <button class="btn-outline" style="border-color: #ef4444; color: #ef4444;" onclick="showClearDataModal()"><i class="fas fa-trash-alt"></i> Clear All Data</button>
+                <button class="btn-outline" style="border-color: #ef4444; color: #ef4444;" onclick="showResetSystemModal()"><i class="fas fa-power-off"></i> Reset System</button>
+                <button class="btn-outline" style="border-color: #ef4444; color: #ef4444;" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+            <!-- DEVELOPER CREDIT - Tevin Mulinge -->
+<div class="developer-credit">
+    <p>© 2024 Nexus Suite | Developed with <span class="heart">❤️</span> by <a href="#" target="_blank">Tevin Mulinge</a></p>
+    <p style="font-size: 0.7rem; margin-top: 0.25rem;">Intelligent Business Management System</p>
+</div>
+        </div>
+    </div>
+    
+    <script src="nexus.js"></script>
+    <script>
+        // ==================== SETTINGS FUNCTIONS ====================
+        
+        function loadSettings() {
+            // Load saved settings from localStorage
+            const settings = JSON.parse(localStorage.getItem('nexus_settings') || '{}');
+            
+            if (settings.business) {
+                document.getElementById('settingBusinessName').value = settings.business.name || 'Nexus Books & Cyber';
+                document.getElementById('settingBusinessEmail').value = settings.business.email || 'info@nexus.co.ke';
+                document.getElementById('settingBusinessPhone').value = settings.business.phone || '+254 700 123456';
+                document.getElementById('settingBusinessAddress').value = settings.business.address || 'Nairobi, Kenya';
+                document.getElementById('settingBusinessHours').value = settings.business.hours || 'Mon-Sat: 8AM - 8PM, Sun: 10AM - 5PM';
+            }
+            
+            if (settings.rates) {
+                document.getElementById('rateInternet').value = settings.rates.internet || 100;
+                document.getElementById('rateComputer').value = settings.rates.computer || 150;
+                document.getElementById('ratePrintBW').value = settings.rates.printBW || 5;
+                document.getElementById('ratePrintColor').value = settings.rates.printColor || 20;
+                document.getElementById('ratePhotocopy').value = settings.rates.photocopy || 2;
+                document.getElementById('rateScanning').value = settings.rates.scanning || 30;
+            }
+            
+            if (settings.preferences) {
+                document.getElementById('prefCurrency').value = settings.preferences.currency || 'KES';
+                document.getElementById('prefDateFormat').value = settings.preferences.dateFormat || 'YYYY-MM-DD';
+                document.getElementById('prefTaxRate').value = settings.preferences.taxRate || 16;
+                document.getElementById('prefInvoicePrefix').value = settings.preferences.invoicePrefix || 'INV-';
+                document.getElementById('prefLowStock').value = settings.preferences.lowStock || 5;
+            }
+            
+            if (settings.notifications) {
+                document.getElementById('notifLowStock').checked = settings.notifications.lowStock !== false;
+                document.getElementById('notifNewSale').checked = settings.notifications.newSale !== false;
+                document.getElementById('notifDailySummary').checked = settings.notifications.dailySummary !== false;
+                document.getElementById('notifEmail').checked = settings.notifications.email || false;
+                document.getElementById('notifSMS').checked = settings.notifications.sms || false;
+            }
+            
+            if (settings.appearance) {
+                document.getElementById('appearanceTheme').value = settings.appearance.theme || 'light';
+                document.getElementById('appearanceAccent').value = settings.appearance.accent || 'purple';
+                document.getElementById('appearanceFontSize').value = settings.appearance.fontSize || 'medium';
+            }
+        }
+        
+        function saveBusinessInfo() {
+            const settings = JSON.parse(localStorage.getItem('nexus_settings') || '{}');
+            settings.business = {
+                name: document.getElementById('settingBusinessName').value,
+                email: document.getElementById('settingBusinessEmail').value,
+                phone: document.getElementById('settingBusinessPhone').value,
+                address: document.getElementById('settingBusinessAddress').value,
+                hours: document.getElementById('settingBusinessHours').value
+            };
+            localStorage.setItem('nexus_settings', JSON.stringify(settings));
+            alert('Business information saved!');
+        }
+        
+        function saveRates() {
+            const settings = JSON.parse(localStorage.getItem('nexus_settings') || '{}');
+            settings.rates = {
+                internet: parseFloat(document.getElementById('rateInternet').value) || 100,
+                computer: parseFloat(document.getElementById('rateComputer').value) || 150,
+                printBW: parseFloat(document.getElementById('ratePrintBW').value) || 5,
+                printColor: parseFloat(document.getElementById('ratePrintColor').value) || 20,
+                photocopy: parseFloat(document.getElementById('ratePhotocopy').value) || 2,
+                scanning: parseFloat(document.getElementById('rateScanning').value) || 30
+            };
+            localStorage.setItem('nexus_settings', JSON.stringify(settings));
+            alert('Cyber rates updated!');
+        }
+        
+        function savePreferences() {
+            const settings = JSON.parse(localStorage.getItem('nexus_settings') || '{}');
+            settings.preferences = {
+                currency: document.getElementById('prefCurrency').value,
+                dateFormat: document.getElementById('prefDateFormat').value,
+                taxRate: parseFloat(document.getElementById('prefTaxRate').value) || 16,
+                invoicePrefix: document.getElementById('prefInvoicePrefix').value,
+                lowStock: parseInt(document.getElementById('prefLowStock').value) || 5
+            };
+            localStorage.setItem('nexus_settings', JSON.stringify(settings));
+            alert('Preferences saved!');
+        }
+        
+        function saveNotifications() {
+            const settings = JSON.parse(localStorage.getItem('nexus_settings') || '{}');
+            settings.notifications = {
+                lowStock: document.getElementById('notifLowStock').checked,
+                newSale: document.getElementById('notifNewSale').checked,
+                dailySummary: document.getElementById('notifDailySummary').checked,
+                email: document.getElementById('notifEmail').checked,
+                sms: document.getElementById('notifSMS').checked
+            };
+            localStorage.setItem('nexus_settings', JSON.stringify(settings));
+            alert('Notification settings saved!');
+        }
+        
+        function saveAppearance() {
+            const settings = JSON.parse(localStorage.getItem('nexus_settings') || '{}');
+            settings.appearance = {
+                theme: document.getElementById('appearanceTheme').value,
+                accent: document.getElementById('appearanceAccent').value,
+                fontSize: document.getElementById('appearanceFontSize').value
+            };
+            localStorage.setItem('nexus_settings', JSON.stringify(settings));
+            
+            // Apply theme immediately
+            const theme = settings.appearance.theme;
+            if (theme === 'dark') {
+                document.body.classList.remove('light-mode');
+                document.body.classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark');
+            } else if (theme === 'light') {
+                document.body.classList.remove('dark-mode');
+                document.body.classList.add('light-mode');
+                localStorage.setItem('theme', 'light');
+            }
+            
+            alert('Appearance settings saved!');
+        }
+        
+        function showClearDataModal() {
+            showModal('⚠️ Clear All Data', `
+                <p style="text-align: center; padding: 1rem;">This will delete ALL products, sales, customers, and settings. This action cannot be undone.</p>
+                <div class="modal-footer">
+                    <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                    <button class="btn btn-primary" style="background: #ef4444;" onclick="clearAllData()">Yes, Clear All Data</button>
+                </div>
+            `);
+        }
+        
+        function clearAllData() {
+            localStorage.removeItem('nexus_products');
+            localStorage.removeItem('nexus_sales');
+            localStorage.removeItem('nexus_customers');
+            localStorage.removeItem('nexus_cyber_sessions');
+            localStorage.removeItem('nexus_settings');
+            closeModal();
+            alert('All data cleared! Page will reload.');
+            location.reload();
+        }
+        
+        function showResetSystemModal() {
+            showModal('⚠️ Reset System', `
+                <p style="text-align: center; padding: 1rem;">This will reset all settings to default. Your data will remain intact.</p>
+                <div class="modal-footer">
+                    <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                    <button class="btn btn-primary" style="background: #f59e0b;" onclick="resetSettings()">Reset System</button>
+                </div>
+            `);
+        }
+        
+        function resetSettings() {
+            localStorage.removeItem('nexus_settings');
+            closeModal();
+            alert('Settings reset to default! Page will reload.');
+            location.reload();
+        }
+        
+        // Load on page ready
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSettings();
+        });
+    </script>
+</body>
+</html>

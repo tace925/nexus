@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus - Sales</title>
+    <link rel="stylesheet" href="nexus.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="light-mode">
+    <div class="nexus-bg"></div>
+    <div class="nexus-particles"></div>
+    
+    <div class="nexus-container">
+        <div class="nexus-header">
+            <div class="nexus-logo-header">
+                <img src="tev.jpg" alt="Nexus Logo" class="nexus-logo-img" onerror="this.style.display='none'">
+                <h1>NEXUS<span class="accent">SALES</span></h1>
+            </div>
+            <div class="nexus-nav">
+                <a href="index.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+                <a href="bookshop.html"><i class="fas fa-book"></i> Bookshop</a>
+                <a href="cyber.html"><i class="fas fa-print"></i> Cyber</a>
+                <a href="admin.html"><i class="fas fa-shield-alt"></i> Admin</a>
+                <a href="sales.html" class="active"><i class="fas fa-cash-register"></i> Sales</a>
+                <a href="invoice.html"><i class="fas fa-file-invoice"></i> Invoices</a>
+                <a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a>
+                <a href="customers.html"><i class="fas fa-users"></i> Customers</a>
+                <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+            </div>
+            <div class="nexus-actions">
+                <button id="theme-toggle" class="theme-toggle">
+                    <i class="fas fa-sun light-icon"></i>
+                    <i class="fas fa-moon dark-icon"></i>
+                </button>
+                <button onclick="logout()" class="logout-btn"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </div>
+        
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                <div class="stat-info">
+                    <h3 id="todaySales">KES 0</h3>
+                    <p>Today's Sales</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-chart-bar"></i></div>
+                <div class="stat-info">
+                    <h3 id="weekSales">KES 0</h3>
+                    <p>This Week</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                <div class="stat-info">
+                    <h3 id="monthSales">KES 0</h3>
+                    <p>This Month</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Sale Card -->
+        <div class="dashboard-card" style="margin-bottom: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h3 style="margin-bottom: 0.5rem;">💰 Quick Sale</h3>
+                    <p style="color: var(--text-tertiary);">Process a new sale in seconds</p>
+                </div>
+                <button class="btn-primary" onclick="showNewSaleModal()" style="padding: 1rem 2rem;"><i class="fas fa-plus"></i> New Sale</button>
+            </div>
+        </div>
+        
+        <!-- Sales Table -->
+        <div class="dashboard-card">
+            <h3>📋 Recent Transactions</h3>
+            <div class="data-table">
+                <table style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:var(--bg-primary);">
+                            <th style="padding:12px;">Invoice #</th>
+                            <th style="padding:12px;">Date</th>
+                            <th style="padding:12px;">Customer</th>
+                            <th style="padding:12px;">Item</th>
+                            <th style="padding:12px;">Amount</th>
+                            <th style="padding:12px;">Status</th>
+                            <th style="padding:12px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="salesList">
+                        <tr><td colspan="7" style="text-align:center; padding:20px;">Loading sales...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="developer-credit">
+            <p>© 2024 Nexus Suite | Developed with <span class="heart">❤️</span> by Tevin Mulinge</p>
+            <p style="font-size: 0.7rem;">Intelligent Business Management System</p>
+        </div>
+    </div>
+    
+    <script src="nexus.js"></script>
+    <script>
+        // ==================== LOCAL DATA STORE ====================
+        
+        function getSales() {
+            return JSON.parse(localStorage.getItem('nexus_sales') || '[]');
+        }
+        
+        function saveSales(sales) {
+            localStorage.setItem('nexus_sales', JSON.stringify(sales));
+        }
+        
+        let allSales = [];
+        
+        // ==================== SALE FUNCTIONS ====================
+        
+        function showNewSaleModal() {
+            const modalHtml = `
+                <div style="padding: 10px;">
+                    <div style="margin-bottom:15px;">
+                        <label>Customer Name *</label>
+                        <input type="text" id="saleCustomer" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); background:var(--bg-primary); color:var(--text-primary);">
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label>Item/Service *</label>
+                        <input type="text" id="saleItem" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); background:var(--bg-primary); color:var(--text-primary);">
+                    </div>
+                    <div style="display:flex; gap:15px; margin-bottom:15px;">
+                        <div style="flex:1;">
+                            <label>Quantity</label>
+                            <input type="number" id="saleQuantity" value="1" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); background:var(--bg-primary); color:var(--text-primary);">
+                        </div>
+                        <div style="flex:1;">
+                            <label>Unit Price (KES) *</label>
+                            <input type="number" id="salePrice" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); background:var(--bg-primary); color:var(--text-primary);">
+                        </div>
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label>Payment Method</label>
+                        <select id="salePayment" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); background:var(--bg-primary); color:var(--text-primary);">
+                            <option>Cash</option>
+                            <option>M-Pesa</option>
+                            <option>Card</option>
+                        </select>
+                    </div>
+                    <div style="display:flex; gap:15px; justify-content:flex-end; margin-top:20px;">
+                        <button onclick="closeModal()" class="btn btn-outline" style="padding:10px 20px; cursor:pointer;">Cancel</button>
+                        <button onclick="saveSale()" class="btn btn-primary" style="padding:10px 20px; cursor:pointer;">Process Sale</button>
+                    </div>
+                </div>
+            `;
+            
+            const modalDiv = document.createElement('div');
+            modalDiv.id = 'saleModal';
+            modalDiv.style.position = 'fixed';
+            modalDiv.style.top = '0';
+            modalDiv.style.left = '0';
+            modalDiv.style.width = '100%';
+            modalDiv.style.height = '100%';
+            modalDiv.style.backgroundColor = 'rgba(0,0,0,0.5)';
+            modalDiv.style.zIndex = '10000';
+            modalDiv.style.display = 'flex';
+            modalDiv.style.alignItems = 'center';
+            modalDiv.style.justifyContent = 'center';
+            modalDiv.innerHTML = `<div style="background: var(--bg-secondary); border-radius: 24px; padding: 25px; max-width: 550px; width: 90%; border: 1px solid var(--border);">${modalHtml}</div>`;
+            document.body.appendChild(modalDiv);
+            
+            window.closeModal = function() {
+                const modal = document.getElementById('saleModal');
+                if (modal) modal.remove();
+            };
+        }
+        
+        async function saveSale() {
+            const customerName = document.getElementById('saleCustomer')?.value;
+            const item = document.getElementById('saleItem')?.value;
+            const quantity = parseInt(document.getElementById('saleQuantity')?.value) || 1;
+            const price = parseFloat(document.getElementById('salePrice')?.value) || 0;
+            const payment = document.getElementById('salePayment')?.value;
+            
+            if (!customerName) { alert('Please enter customer name'); return; }
+            if (!item) { alert('Please enter item description'); return; }
+            if (price <= 0) { alert('Please enter a valid price'); return; }
+            
+            const totalAmount = quantity * price;
+            const invoiceNumber = 'INV-' + Date.now();
+            
+            try {
+                const sales = getSales();
+                const newSale = {
+                    id: Date.now(),
+                    order_ref: invoiceNumber,
+                    customer_name: customerName,
+                    items: [{ description: item, quantity: quantity, unit_price: price }],
+                    total_amount: totalAmount,
+                    status: 'completed',
+                    payment_method: payment,
+                    sale_date: new Date().toISOString(),
+                    type: 'sale'
+                };
+                sales.push(newSale);
+                saveSales(sales);
+                
+                alert(`✅ SALE COMPLETED!\n\nInvoice: ${invoiceNumber}\nCustomer: ${customerName}\nItem: ${item}\nQuantity: ${quantity}\nTotal: KES ${totalAmount.toLocaleString()}\nPayment: ${payment}\n\nThank you for your business!`);
+                
+                showThankYouModal(invoiceNumber, customerName, item, totalAmount);
+                
+                closeModal();
+                loadSales();
+                updateStats();
+                
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+        
+        function showThankYouModal(invoice, name, item, amount) {
+            const modalDiv = document.createElement('div');
+            modalDiv.id = 'thankYouModal';
+            modalDiv.style.position = 'fixed';
+            modalDiv.style.top = '0';
+            modalDiv.style.left = '0';
+            modalDiv.style.width = '100%';
+            modalDiv.style.height = '100%';
+            modalDiv.style.backgroundColor = 'rgba(0,0,0,0.5)';
+            modalDiv.style.zIndex = '10001';
+            modalDiv.style.display = 'flex';
+            modalDiv.style.alignItems = 'center';
+            modalDiv.style.justifyContent = 'center';
+            modalDiv.innerHTML = `
+                <div style="background: var(--bg-secondary); border-radius: 24px; padding: 30px; max-width: 450px; width: 90%; text-align: center; border: 1px solid var(--border);">
+                    <i class="fas fa-check-circle" style="font-size: 4rem; color: #10b981; margin-bottom: 1rem;"></i>
+                    <h2 style="color: var(--accent); margin-bottom: 0.5rem;">Thank You!</h2>
+                    <p style="margin-bottom: 1rem;">Sale completed successfully</p>
+                    <div style="background: var(--bg-primary); border-radius: 12px; padding: 1rem; margin: 1rem 0; text-align: left;">
+                        <p><strong>Invoice:</strong> ${escapeHtml(invoice)}</p>
+                        <p><strong>Customer:</strong> ${escapeHtml(name)}</p>
+                        <p><strong>Item:</strong> ${escapeHtml(item)}</p>
+                        <p><strong>Total:</strong> KES ${amount.toLocaleString()}</p>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" class="btn btn-primary" style="padding: 10px 30px; cursor: pointer;">Done</button>
+                </div>
+            `;
+            document.body.appendChild(modalDiv);
+            
+            setTimeout(() => {
+                const modal = document.getElementById('thankYouModal');
+                if (modal) modal.remove();
+            }, 5000);
+        }
+        
+        function loadSales() {
+            const sales = getSales();
+            allSales = sales;
+            displaySales();
+        }
+        
+        function displaySales() {
+            const tbody = document.getElementById('salesList');
+            if (!tbody) return;
+            
+            if (!allSales.length) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px;">📄 No sales yet. Click "New Sale" to get started!</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = allSales.slice().reverse().map(sale => `
+                <tr style="border-bottom:1px solid var(--border);">
+                    <td style="padding:12px;"><strong>${escapeHtml(sale.order_ref)}</strong></td>
+                    <td style="padding:12px;">${new Date(sale.sale_date).toLocaleDateString()}</td>
+                    <td style="padding:12px;">${escapeHtml(sale.customer_name || '-')}</td>
+                    <td style="padding:12px;">${escapeHtml(sale.items?.[0]?.description || '-')}</td>
+                    <td style="padding:12px;">KES ${(sale.total_amount || 0).toLocaleString()}</td>
+                    <td style="padding:12px;"><span style="background:#10b98120; color:#10b981; padding:4px 12px; border-radius:20px;">${sale.status || 'completed'}</span></td>
+                    <td style="padding:12px;">
+                        <i class="fas fa-trash" style="cursor:pointer; color:#ef4444;" onclick="deleteSale(${sale.id})"></i>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function deleteSale(id) {
+            if (!confirm('Delete this sale? This cannot be undone.')) return;
+            try {
+                let sales = getSales();
+                sales = sales.filter(s => s.id !== id);
+                saveSales(sales);
+                loadSales();
+                updateStats();
+                alert('Sale deleted');
+            } catch (error) {
+                alert('Error deleting sale');
+            }
+        }
+        
+        function updateStats() {
+            const sales = getSales();
+            
+            const today = new Date().toISOString().split('T')[0];
+            const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString().split('T')[0];
+            const monthAgo = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0];
+            
+            const todayTotal = sales.filter(s => s.sale_date && s.sale_date.startsWith(today))
+                .reduce((sum, i) => sum + (parseFloat(i.total_amount) || 0), 0);
+            const weekTotal = sales.filter(s => s.sale_date && s.sale_date >= weekAgo)
+                .reduce((sum, i) => sum + (parseFloat(i.total_amount) || 0), 0);
+            const monthTotal = sales.filter(s => s.sale_date && s.sale_date >= monthAgo)
+                .reduce((sum, i) => sum + (parseFloat(i.total_amount) || 0), 0);
+            
+            document.getElementById('todaySales').textContent = 'KES ' + todayTotal.toLocaleString();
+            document.getElementById('weekSales').textContent = 'KES ' + weekTotal.toLocaleString();
+            document.getElementById('monthSales').textContent = 'KES ' + monthTotal.toLocaleString();
+        }
+        
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+        
+        // Load on page ready
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSales();
+            updateStats();
+        });
+    </script>
+</body>
+</html>

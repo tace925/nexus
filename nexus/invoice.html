@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus - Invoices</title>
+    <link rel="stylesheet" href="nexus.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="light-mode">
+    <div class="nexus-bg"></div>
+    <div class="nexus-particles"></div>
+    
+    <div class="nexus-container">
+        <div class="nexus-header">
+            <div class="nexus-logo-header"><img src="tev.jpg" alt="Nexus Logo" class="nexus-logo-img" onerror="this.style.display='none'"><h1>NEXUS<span class="accent">INVOICES</span></h1></div>
+            <div class="nexus-nav">
+                <a href="index.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+                <a href="bookshop.html"><i class="fas fa-book"></i> Bookshop</a>
+                <a href="cyber.html"><i class="fas fa-print"></i> Cyber</a>
+                <a href="admin.html"><i class="fas fa-shield-alt"></i> Admin</a>
+                <a href="sales.html"><i class="fas fa-cash-register"></i> Sales</a>
+                <a href="invoice.html" class="active"><i class="fas fa-file-invoice"></i> Invoices</a>
+                <a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a>
+                <a href="customers.html"><i class="fas fa-users"></i> Customers</a>
+                <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+            </div>
+            <div class="nexus-actions">
+                <button id="theme-toggle" class="theme-toggle"><i class="fas fa-sun light-icon"></i><i class="fas fa-moon dark-icon"></i></button>
+                <button onclick="logout()" class="logout-btn"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-icon"><i class="fas fa-file-invoice"></i></div><div class="stat-info"><h3 id="totalInvoices">0</h3><p>Total Invoices</p></div></div>
+            <div class="stat-card"><div class="stat-icon"><i class="fas fa-check-circle"></i></div><div class="stat-info"><h3 id="paidInvoices">0</h3><p>Paid</p></div></div>
+            <div class="stat-card"><div class="stat-icon"><i class="fas fa-clock"></i></div><div class="stat-info"><h3 id="pendingInvoices">0</h3><p>Pending</p></div></div>
+            <div class="stat-card"><div class="stat-icon"><i class="fas fa-exclamation-circle"></i></div><div class="stat-info"><h3 id="overdueInvoices">0</h3><p>Overdue</p></div></div>
+        </div>
+        
+        <div class="dashboard-card" style="margin-bottom: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div><h3>📄 Invoice Management</h3><p style="color: var(--text-tertiary);">Create, manage, and track all your invoices</p></div>
+                <button class="btn-primary" onclick="showNewInvoiceForm()"><i class="fas fa-plus"></i> Create Invoice</button>
+            </div>
+        </div>
+        
+        <div class="dashboard-card">
+            <div class="data-table">
+                <table style="width:100%"><thead> <tr><th>Invoice #</th><th>Date</th><th>Customer</th><th>Item</th><th>Amount</th><th>Status</th><th>Actions</th></tr> </thead>
+                <tbody id="invoicesList"> <tr><td colspan="7" style="text-align:center;">Loading...</td></tr> </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="developer-credit"><p>© 2024 Nexus Suite | Developed with ❤️ by Tevin Mulinge</p></div>
+    </div>
+    
+    <script src="nexus.js"></script>
+    <script>
+        // ==================== LOCAL DATA STORE ====================
+        
+        function getSales() {
+            return JSON.parse(localStorage.getItem('nexus_sales') || '[]');
+        }
+        
+        function saveSales(sales) {
+            localStorage.setItem('nexus_sales', JSON.stringify(sales));
+        }
+        
+        // ==================== INVOICE FUNCTIONS ====================
+        
+        function showNewInvoiceForm() {
+            const modalHtml = `
+                <div style="padding:10px">
+                    <div style="margin-bottom:15px"><label>Customer Name *</label><input type="text" id="invCustomer" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border)"></div>
+                    <div style="margin-bottom:15px"><label>Customer Email</label><input type="email" id="invEmail" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border)"></div>
+                    <div style="margin-bottom:15px"><label>Item/Service *</label><input type="text" id="invItem" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border)"></div>
+                    <div style="display:flex;gap:15px;margin-bottom:15px"><div style="flex:1"><label>Quantity</label><input type="number" id="invQty" value="1" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border)"></div><div style="flex:1"><label>Unit Price (KES)</label><input type="number" id="invPrice" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border)"></div></div>
+                    <div style="margin-bottom:15px"><label>Status</label><select id="invStatus" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border)"><option value="pending">Pending</option><option value="paid">Paid</option><option value="overdue">Overdue</option></select></div>
+                    <div style="display:flex;gap:15px;justify-content:flex-end"><button onclick="closeModal()" style="padding:10px 20px;border-radius:8px;border:1px solid #ddd;background:white">Cancel</button><button onclick="saveInvoice()" style="padding:10px 20px;border-radius:8px;background:#6B46C1;color:white;border:none">Create Invoice</button></div>
+                </div>
+            `;
+            const modal = document.createElement('div');
+            modal.id = 'invoiceModal';
+            modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:10000;display:flex;align-items:center;justify-content:center';
+            modal.innerHTML = `<div style="background:var(--bg-secondary);border-radius:24px;padding:25px;max-width:550px;width:90%">${modalHtml}</div>`;
+            document.body.appendChild(modal);
+            window.closeModal = () => { const m = document.getElementById('invoiceModal'); if(m) m.remove(); };
+        }
+        
+        async function saveInvoice() {
+            const customer = document.getElementById('invCustomer')?.value;
+            const email = document.getElementById('invEmail')?.value;
+            const item = document.getElementById('invItem')?.value;
+            const qty = parseInt(document.getElementById('invQty')?.value) || 1;
+            const price = parseFloat(document.getElementById('invPrice')?.value) || 0;
+            const status = document.getElementById('invStatus')?.value;
+            if (!customer) { alert('Please enter customer name'); return; }
+            if (!item) { alert('Please enter item description'); return; }
+            if (price <= 0) { alert('Please enter valid price'); return; }
+            
+            const total = qty * price;
+            const invoiceNumber = 'INV-' + Date.now();
+            
+            try {
+                const sales = getSales();
+                const newInvoice = {
+                    id: Date.now(),
+                    order_ref: invoiceNumber,
+                    customer_name: customer,
+                    customer_email: email,
+                    items: [{ description: item, quantity: qty, unit_price: price }],
+                    total_amount: total,
+                    status: status,
+                    sale_date: new Date().toISOString(),
+                    type: 'invoice'
+                };
+                sales.push(newInvoice);
+                saveSales(sales);
+                
+                alert(`✅ INVOICE CREATED!\n\nInvoice: ${invoiceNumber}\nCustomer: ${customer}\nItem: ${item}\nTotal: KES ${total.toLocaleString()}`);
+                showThankYouModal(invoiceNumber, customer, item, total);
+                closeModal();
+                loadInvoices();
+                updateStats();
+            } catch (error) { 
+                alert('Error: ' + error.message); 
+            }
+        }
+        
+        function showThankYouModal(invoice, name, item, amount) {
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:10001;display:flex;align-items:center;justify-content:center';
+            modal.innerHTML = `<div style="background:var(--bg-secondary);border-radius:24px;padding:30px;max-width:400px;text-align:center"><i class="fas fa-check-circle" style="font-size:4rem;color:#10b981"></i><h2>Invoice Created!</h2><div style="background:var(--bg-primary);border-radius:12px;padding:1rem;margin:1rem 0"><p><strong>Invoice:</strong> ${invoice}</p><p><strong>Customer:</strong> ${escapeHtml(name)}</p><p><strong>Item:</strong> ${escapeHtml(item)}</p><p><strong>Total:</strong> KES ${amount.toLocaleString()}</p></div><button onclick="this.parentElement.parentElement.remove()" style="padding:10px 20px;background:#6B46C1;color:white;border:none;border-radius:8px">Done</button></div>`;
+            document.body.appendChild(modal);
+            setTimeout(() => modal.remove(), 5000);
+        }
+        
+        function loadInvoices() {
+            const sales = getSales();
+            const tbody = document.getElementById('invoicesList');
+            if (!tbody) return;
+            if (!sales || sales.length === 0) { 
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">📄 No invoices yet. Click "Create Invoice" to get started!</td></tr>'; 
+                return; 
+            }
+            tbody.innerHTML = sales.slice().reverse().map(inv => ` <tr><td style="padding:10px;"><strong>${inv.order_ref}</strong></td><td style="padding:10px;">${new Date(inv.sale_date).toLocaleDateString()}</td><td style="padding:10px;">${escapeHtml(inv.customer_name || '-')}</td><td style="padding:10px;">${inv.items?.[0]?.description || '-'}</td><td style="padding:10px;">KES ${(inv.total_amount || 0).toLocaleString()}</td><td style="padding:10px;"><span style="background:${inv.status === 'paid' ? '#10b98120' : (inv.status === 'pending' ? '#f59e0b20' : '#ef444420')};color:${inv.status === 'paid' ? '#10b981' : (inv.status === 'pending' ? '#f59e0b' : '#ef4444')};padding:4px 12px;border-radius:20px;">${inv.status}</span></td><td style="padding:10px;"><i class="fas fa-trash" style="cursor:pointer;color:#ef4444;" onclick="deleteInvoice(${inv.id})"></i></td></tr>`).join('');
+        }
+        
+        function deleteInvoice(id) { 
+            if (!confirm('Delete this invoice?')) return; 
+            let sales = getSales();
+            sales = sales.filter(s => s.id !== id);
+            saveSales(sales);
+            loadInvoices(); 
+            updateStats(); 
+            alert('Invoice deleted'); 
+        }
+        
+        function updateStats() {
+            const sales = getSales();
+            if (sales) {
+                document.getElementById('totalInvoices').textContent = sales.length;
+                document.getElementById('paidInvoices').textContent = sales.filter(i => i.status === 'paid').length;
+                document.getElementById('pendingInvoices').textContent = sales.filter(i => i.status === 'pending').length;
+                document.getElementById('overdueInvoices').textContent = sales.filter(i => i.status === 'overdue').length;
+            }
+        }
+        
+        function escapeHtml(str) { 
+            if (!str) return ''; 
+            return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])); 
+        }
+        
+        // Load on page ready
+        document.addEventListener('DOMContentLoaded', function() {
+            loadInvoices();
+            updateStats();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Dashboard · Books & Cyber</title>
+    <link rel="stylesheet" href="nexus.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="light-mode">
+    <div class="nexus-bg"></div>
+    <div class="nexus-particles"></div>
+    
+    <div class="nexus-container">
+        <div class="nexus-header">
+            <div class="nexus-logo-header">
+                <img src="tev.jpg" alt="Nexus Logo" class="nexus-logo-img" onerror="this.style.display='none'">
+                <h1>NEXUS<span class="accent">SUITE</span></h1>
+            </div>
+            <div class="nexus-nav">
+                <a href="index.html" class="active"><i class="fas fa-chart-line"></i> Dashboard</a>
+                <a href="bookshop.html"><i class="fas fa-book"></i> Bookshop</a>
+                <a href="cyber.html"><i class="fas fa-print"></i> Cyber</a>
+                <a href="admin.html"><i class="fas fa-shield-alt"></i> Admin</a>
+                <a href="sales.html"><i class="fas fa-cash-register"></i> Sales</a>
+                <a href="invoice.html"><i class="fas fa-file-invoice"></i> Invoices</a>
+                <a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a>
+                <a href="customers.html"><i class="fas fa-users"></i> Customers</a>
+                <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+            </div>
+           <div class="nexus-actions">
+                <button id="theme-toggle" class="theme-toggle">
+                    <i class="fas fa-sun light-icon"></i>
+                    <i class="fas fa-moon dark-icon"></i>
+                </button>
+                <button onclick="logout()" class="logout-btn"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-icon"><i class="fas fa-book"></i></div><div class="stat-info"><h3 id="totalBooks">0</h3><p>Books in Stock</p></div></div>
+            <div class="stat-card"><div class="stat-icon"><i class="fas fa-print"></i></div><div class="stat-info"><h3 id="todayCyberSales">KES 0</h3><p>Today's Cyber Sales</p></div></div>
+            <div class="stat-card"><div class="stat-icon"><i class="fas fa-shopping-cart"></i></div><div class="stat-info"><h3 id="totalSales">KES 0</h3><p>Total Sales (Today)</p></div></div>
+            <div class="stat-card"><div class="stat-icon"><i class="fas fa-users"></i></div><div class="stat-info"><h3 id="activeCustomers">0</h3><p>Active Customers</p></div></div>
+        </div>
+        
+        <div class="dashboard-grid">
+            <div class="dashboard-card">
+                <h3>⚡ Quick Actions</h3>
+                <div class="quick-actions">
+                    <button class="btn-primary" onclick="location.href='sales.html'"><i class="fas fa-cash-register"></i> New Sale</button>
+                    <button class="btn-primary" onclick="location.href='bookshop.html'"><i class="fas fa-plus"></i> Add Product</button>
+                    <button class="btn-primary" onclick="location.href='cyber.html'"><i class="fas fa-clock"></i> Start Cyber Session</button>
+                    <button class="btn-primary" onclick="location.href='customers.html'"><i class="fas fa-user-plus"></i> New Customer</button>
+                </div>
+            </div>
+            
+            <div class="dashboard-card">
+                <h3>⚠️ Low Stock Alert</h3>
+                <div id="lowStockList"><p>Loading...</p></div>
+                <a href="bookshop.html" class="view-all">Manage Inventory →</a>
+            </div>
+            
+            <div class="dashboard-card">
+                <h3>📈 Recent Activity</h3>
+                <div id="recentActivity"><p>Loading...</p></div>
+                <a href="reports.html" class="view-all">View All →</a>
+            </div>
+        </div>
+        
+        <div class="developer-credit">
+            <p>© 2024 Nexus Suite | Developed with <span class="heart">❤️</span> by Tevin Mulinge</p>
+            <p style="font-size: 0.7rem;">Intelligent Business Management System</p>
+        </div>
+    </div>
+    
+    <script src="nexus.js"></script>
+    <script>
+        // ==================== LOCAL DATA STORE ====================
+        
+        function getProducts() {
+            return JSON.parse(localStorage.getItem('nexus_products') || '[]');
+        }
+        
+        function getSales() {
+            return JSON.parse(localStorage.getItem('nexus_sales') || '[]');
+        }
+        
+        function getCustomers() {
+            return JSON.parse(localStorage.getItem('nexus_customers') || '[]');
+        }
+        
+        function getCyberSessions() {
+            return JSON.parse(localStorage.getItem('nexus_cyber_sessions') || '[]');
+        }
+        
+        // ==================== DASHBOARD FUNCTIONS ====================
+        
+        function loadDashboard() {
+            const products = getProducts();
+            const sales = getSales();
+            const customers = getCustomers();
+            const cyberSessions = getCyberSessions();
+            
+            const today = new Date().toISOString().split('T')[0];
+            
+            // Total books in stock
+            const totalBooks = products.reduce((sum, p) => sum + (parseInt(p.quantity) || 0), 0);
+            document.getElementById('totalBooks').textContent = totalBooks;
+            
+            // Today's cyber sales
+            const todayCyber = cyberSessions.filter(s => s.created_at && s.created_at.startsWith(today));
+            const cyberTotal = todayCyber.reduce((sum, s) => sum + (parseFloat(s.total_amount) || 0), 0);
+            document.getElementById('todayCyberSales').textContent = 'KES ' + cyberTotal.toLocaleString();
+            
+            // Today's book sales
+            const todaySales = sales.filter(s => s.sale_date && s.sale_date.startsWith(today));
+            const salesTotal = todaySales.reduce((sum, s) => sum + (parseFloat(s.total_amount) || 0), 0);
+            document.getElementById('totalSales').textContent = 'KES ' + (cyberTotal + salesTotal).toLocaleString();
+            
+            // Active customers
+            document.getElementById('activeCustomers').textContent = customers.length;
+            
+            // Low stock items
+            const lowStock = products.filter(p => (parseInt(p.quantity) || 0) <= 5);
+            const lowStockList = document.getElementById('lowStockList');
+            if (!lowStock || lowStock.length === 0) {
+                lowStockList.innerHTML = '<p class="no-items">✅ All items have sufficient stock</p>';
+            } else {
+                lowStockList.innerHTML = lowStock.slice(0, 5).map(item => `
+                    <div class="low-stock-item">
+                        <span>${escapeHtml(item.title)}</span>
+                        <span class="stock-warning">${item.quantity} left</span>
+                    </div>
+                `).join('');
+            }
+            
+            // Recent activity
+            const recentSales = sales.slice().reverse().slice(0, 3);
+            const recentActivity = document.getElementById('recentActivity');
+            if (!recentSales || recentSales.length === 0) {
+                recentActivity.innerHTML = '<div class="activity-item"><i class="fas fa-info-circle"></i><span>No recent sales</span></div>';
+            } else {
+                recentActivity.innerHTML = recentSales.map(sale => `
+                    <div class="activity-item">
+                        <i class="fas fa-cash-register"></i>
+                        <span>Sale: KES ${(parseFloat(sale.total_amount) || 0).toLocaleString()}</span>
+                        <small>${getTimeAgo(new Date(sale.sale_date))}</small>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        function getTimeAgo(date) {
+            if (!date || isNaN(date)) return 'recently';
+            const seconds = Math.floor((new Date() - date) / 1000);
+            if (seconds < 60) return 'just now';
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes}m ago`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours}h ago`;
+            const days = Math.floor(hours / 24);
+            return `${days}d ago`;
+        }
+        
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m]));
+        }
+        
+        // Load on page ready
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboard();
+        });
+    </script>
+</body>
+</html>

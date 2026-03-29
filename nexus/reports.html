@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus - Reports</title>
+    <link rel="stylesheet" href="nexus.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="light-mode">
+    <div class="nexus-bg"></div>
+    <div class="nexus-particles"></div>
+    
+    <div class="nexus-container">
+        <div class="nexus-header">
+            <div class="nexus-logo-header">
+                <!-- ADD YOUR LOGO IMAGE - Replace 'logo.png' with your actual image filename -->
+                <img src="tev.jpg" alt="Nexus Logo" class="nexus-logo-img" onerror="this.style.display='none'">
+                <span class="logo-icon" style="display: none;">📚💻</span>
+                <h1>NEXUS<span class="accent">REPORT</span></h1>
+            </div>
+            <div class="nexus-nav">
+                <a href="index.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+                <a href="bookshop.html"><i class="fas fa-book"></i> Bookshop</a>
+                <a href="cyber.html"><i class="fas fa-print"></i> Cyber</a>
+                <a href="admin.html"><i class="fas fa-shield-alt"></i> Admin</a>
+                <a href="sales.html"><i class="fas fa-cash-register"></i> Sales</a>
+                <a href="invoice.html"><i class="fas fa-file-invoice"></i> Invoices</a>
+                <a href="reports.html" class="active"><i class="fas fa-chart-bar"></i> Reports</a>
+                <a href="customers.html"><i class="fas fa-users"></i> Customers</a>
+                <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+            </div>
+            <div class="nexus-actions">
+                <button id="theme-toggle" class="theme-toggle">
+                    <i class="fas fa-sun light-icon"></i>
+                    <i class="fas fa-moon dark-icon"></i>
+                </button>
+                <button onclick="logout()" class="logout-btn"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </div>
+        
+        <!-- Stats Overview Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                <div class="stat-info">
+                    <h3 id="reportTotalRevenue">KES 0</h3>
+                    <p>Total Revenue</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-chart-bar"></i></div>
+                <div class="stat-info">
+                    <h3 id="reportGrowth">+0%</h3>
+                    <p>Growth</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
+                <div class="stat-info">
+                    <h3 id="reportTotalOrders">0</h3>
+                    <p>Total Orders</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-info">
+                    <h3 id="reportActiveCustomers">0</h3>
+                    <p>Active Customers</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Report Type Cards -->
+        <h2 style="margin: 2rem 0 1rem 0;">Generate Reports</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+            <div class="dashboard-card" style="text-align: center;">
+                <i class="fas fa-chart-line" style="font-size: 2.5rem; color: var(--accent); margin-bottom: 1rem; display: inline-block;"></i>
+                <h3>Sales Report</h3>
+                <p style="color: var(--text-tertiary); margin-bottom: 1rem;">Daily, weekly, or monthly sales summary</p>
+                <button class="btn-primary" onclick="showReportModal('Sales Report')" style="width: 100%;">Generate →</button>
+            </div>
+            
+            <div class="dashboard-card" style="text-align: center;">
+                <i class="fas fa-box" style="font-size: 2.5rem; color: var(--accent); margin-bottom: 1rem; display: inline-block;"></i>
+                <h3>Inventory Report</h3>
+                <p style="color: var(--text-tertiary); margin-bottom: 1rem;">Stock levels, low stock alerts, value</p>
+                <button class="btn-primary" onclick="showReportModal('Inventory Report')" style="width: 100%;">Generate →</button>
+            </div>
+            
+            <div class="dashboard-card" style="text-align: center;">
+                <i class="fas fa-users" style="font-size: 2.5rem; color: var(--accent); margin-bottom: 1rem; display: inline-block;"></i>
+                <h3>Customer Report</h3>
+                <p style="color: var(--text-tertiary); margin-bottom: 1rem;">Customer activity, top spenders, retention</p>
+                <button class="btn-primary" onclick="showReportModal('Customer Report')" style="width: 100%;">Generate →</button>
+            </div>
+            
+            <div class="dashboard-card" style="text-align: center;">
+                <i class="fas fa-print" style="font-size: 2.5rem; color: var(--accent); margin-bottom: 1rem; display: inline-block;"></i>
+                <h3>Cyber Services Report</h3>
+                <p style="color: var(--text-tertiary); margin-bottom: 1rem;">Session usage, revenue, peak hours</p>
+                <button class="btn-primary" onclick="showReportModal('Cyber Services Report')" style="width: 100%;">Generate →</button>
+            </div>
+        </div>
+        
+        <!-- Sales Summary Card -->
+        <div class="dashboard-card" style="margin-bottom: 1.5rem;">
+            <h3>📊 Sales Summary</h3>
+            <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                <select style="padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-primary);">
+                    <option>2024</option>
+                    <option>2023</option>
+                </select>
+                <button class="btn-primary">Generate Report</button>
+            </div>
+            <div class="data-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th>Revenue</th>
+                            <th>Orders</th>
+                            <th>Cyber Sessions</th>
+                            <th>Growth</th>
+                        </tr>
+                    </thead>
+                    <tbody id="salesSummaryTable">
+                        <tr>
+                            <td colspan="5" style="text-align:center;">Loading data...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Top Products and Performance Cards -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem;">
+            <div class="dashboard-card">
+                <h3>🏆 Top Selling Products</h3>
+                <div id="topProductsList">
+                    <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border);">
+                        <span>No data available</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="dashboard-card">
+                <h3>📈 Performance Metrics</h3>
+                <div>
+                    <div style="margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Average Order Value</span>
+                            <strong id="avgOrderValue">KES 0</strong>
+                        </div>
+                        <div style="background: var(--border); height: 8px; border-radius: 4px; overflow: hidden;">
+                            <div style="width: 0%; background: var(--accent); height: 100%; border-radius: 4px;"></div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Customer Retention</span>
+                            <strong>78%</strong>
+                        </div>
+                        <div style="background: var(--border); height: 8px; border-radius: 4px; overflow: hidden;">
+                            <div style="width: 78%; background: var(--accent); height: 100%; border-radius: 4px;"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Monthly Growth Target</span>
+                            <strong>85%</strong>
+                        </div>
+                        <div style="background: var(--border); height: 8px; border-radius: 4px; overflow: hidden;">
+                            <div style="width: 85%; background: var(--gold); height: 100%; border-radius: 4px;"></div>
+                        </div>
+                    </div>
+                    <!-- DEVELOPER CREDIT - Tevin Mulinge -->
+<div class="developer-credit">
+    <p>© 2024 Nexus Suite | Developed with <span class="heart">❤️</span> by <a href="#" target="_blank">Tevin Mulinge</a></p>
+    <p style="font-size: 0.7rem; margin-top: 0.25rem;">Intelligent Business Management System</p>
+</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="nexus.js"></script>
+    <script>
+        // ==================== LOCAL DATA STORE ====================
+        
+        function getProducts() {
+            return JSON.parse(localStorage.getItem('nexus_products') || '[]');
+        }
+        
+        function getSales() {
+            return JSON.parse(localStorage.getItem('nexus_sales') || '[]');
+        }
+        
+        function getCustomers() {
+            return JSON.parse(localStorage.getItem('nexus_customers') || '[]');
+        }
+        
+        function getCyberSessions() {
+            return JSON.parse(localStorage.getItem('nexus_cyber_sessions') || '[]');
+        }
+        
+        // ==================== REPORT FUNCTIONS ====================
+        
+        function loadReportData() {
+            const products = getProducts();
+            const sales = getSales();
+            const customers = getCustomers();
+            const sessions = getCyberSessions();
+            
+            // Calculate stats
+            const totalRevenue = sales.reduce((sum, s) => sum + (parseFloat(s.total_amount) || 0), 0);
+            const totalOrders = sales.length;
+            
+            // Update summary cards
+            document.getElementById('reportTotalRevenue').textContent = 'KES ' + totalRevenue.toLocaleString();
+            document.getElementById('reportTotalOrders').textContent = totalOrders;
+            document.getElementById('reportActiveCustomers').textContent = customers.length;
+            
+            // Calculate average order value
+            const avgOrder = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+            document.getElementById('avgOrderValue').textContent = 'KES ' + Math.round(avgOrder).toLocaleString();
+            
+            // Top products (mock calculation from sales)
+            const productSales = {};
+            sales.forEach(sale => {
+                if (sale.items && sale.items[0]) {
+                    const itemName = sale.items[0].description || 'Unknown';
+                    productSales[itemName] = (productSales[itemName] || 0) + 1;
+                }
+            });
+            
+            const sortedProducts = Object.entries(productSales)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 4);
+            
+            const topProductsList = document.getElementById('topProductsList');
+            if (sortedProducts.length === 0) {
+                topProductsList.innerHTML = '<div style="padding: 0.75rem 0; color: var(--text-tertiary);">No sales data available</div>';
+            } else {
+                topProductsList.innerHTML = sortedProducts.map((p, index) => `
+                    <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border);">
+                        <span><strong>${index + 1}.</strong> ${escapeHtml(p[0])}</span>
+                        <strong>${p[1]} sold</strong>
+                    </div>
+                `).join('');
+            }
+            
+            // Sales summary table (mock monthly data)
+            const tbody = document.getElementById('salesSummaryTable');
+            const months = ['January', 'February', 'March'];
+            const monthlyData = months.map((month, idx) => {
+                const monthSales = sales.filter(s => {
+                    const date = new Date(s.sale_date);
+                    return date.getMonth() === idx;
+                });
+                const revenue = monthSales.reduce((sum, s) => sum + (parseFloat(s.total_amount) || 0), 0);
+                const orders = monthSales.length;
+                const cyberCount = sessions.filter(s => {
+                    const date = new Date(s.created_at);
+                    return date.getMonth() === idx;
+                }).length;
+                return { month, revenue, orders, cyberCount };
+            });
+            
+            tbody.innerHTML = monthlyData.map((data, idx) => {
+                const prevRevenue = idx > 0 ? monthlyData[idx - 1].revenue : data.revenue;
+                const growth = prevRevenue > 0 ? ((data.revenue - prevRevenue) / prevRevenue * 100).toFixed(0) : 0;
+                return `
+                    <tr>
+                        <td>${data.month}</td>
+                        <td>KES ${data.revenue.toLocaleString()}</td>
+                        <td>${data.orders}</td>
+                        <td>${data.cyberCount}</td>
+                        <td style="color: ${growth >= 0 ? '#10b981' : '#ef4444'};">${growth >= 0 ? '+' : ''}${growth}%</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        function showReportModal(type) {
+            showModal(type, `
+                <p style="text-align: center; padding: 1rem;">Report generated successfully!</p>
+                <div class="modal-footer">
+                    <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                    <button class="btn btn-primary" onclick="closeModal()">Download PDF</button>
+                    <button class="btn btn-primary" onclick="closeModal()">Download CSV</button>
+                </div>
+            `);
+        }
+        
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m]));
+        }
+        
+        // Load on page ready
+        document.addEventListener('DOMContentLoaded', function() {
+            loadReportData();
+        });
+    </script>
+</body>
+</html>

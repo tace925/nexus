@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus - Customers</title>
+    <link rel="stylesheet" href="nexus.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="light-mode">
+    <div class="nexus-bg"></div>
+    <div class="nexus-particles"></div>
+    
+    <div class="nexus-container">
+        <div class="nexus-header">
+            <div class="nexus-logo-header"><img src="tev.jpg" alt="Nexus Logo" class="nexus-logo-img" onerror="this.style.display='none'"><h1>NEXUS<span class="accent">CUSTOMERS</span></h1></div>
+            <div class="nexus-nav">
+                <a href="index.html"><i class="fas fa-chart-line"></i> Dashboard</a>
+                <a href="bookshop.html"><i class="fas fa-book"></i> Bookshop</a>
+                <a href="cyber.html"><i class="fas fa-print"></i> Cyber</a>
+                <a href="admin.html"><i class="fas fa-shield-alt"></i> Admin</a>
+                <a href="sales.html"><i class="fas fa-cash-register"></i> Sales</a>
+                <a href="invoice.html"><i class="fas fa-file-invoice"></i> Invoices</a>
+                <a href="reports.html"><i class="fas fa-chart-bar"></i> Reports</a>
+                <a href="customers.html" class="active"><i class="fas fa-users"></i> Customers</a>
+                <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+            </div>
+            <div class="nexus-actions">
+                <button id="theme-toggle" class="theme-toggle"><i class="fas fa-sun light-icon"></i><i class="fas fa-moon dark-icon"></i></button>
+                <button onclick="logout()" class="logout-btn"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-icon"><i class="fas fa-users"></i></div><div class="stat-info"><h3 id="totalCustomers">0</h3><p>Total Customers</p></div></div>
+            <div class="stat-card"><div class="stat-icon"><i class="fas fa-user-plus"></i></div><div class="stat-info"><h3 id="newCustomers">0</h3><p>New This Month</p></div></div>
+            <div class="stat-card"><div class="stat-icon"><i class="fas fa-chart-line"></i></div><div class="stat-info"><h3 id="lifetimeValue">KES 0</h3><p>Lifetime Value</p></div></div>
+        </div>
+        
+        <div class="dashboard-card" style="margin-bottom: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div><h3>👥 Customer Management</h3><p style="color: var(--text-tertiary);">Manage your customer database</p></div>
+                <button class="btn-primary" onclick="showAddCustomerModal()"><i class="fas fa-plus"></i> Add Customer</button>
+            </div>
+        </div>
+        
+        <div class="dashboard-card">
+            <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                <input type="text" id="searchInput" placeholder="Search by name..." style="flex: 2; padding: 0.75rem; border-radius: 12px; border: 1px solid var(--border);">
+                <button class="btn-primary" onclick="searchCustomers()">Search</button>
+                <button class="btn-outline" onclick="exportCustomers()">Export CSV</button>
+            </div>
+            <div class="data-table">
+                <table style="width:100%"><thead> <tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Total Spent</th><th>Orders</th><th>Joined</th><th>Actions</th> </thead>
+                <tbody id="customersList"> <tr><td colspan="8" style="text-align:center;">Loading...</td></tr> </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="developer-credit"><p>© 2024 Nexus Suite | Developed with ❤️ by Tevin Mulinge</p></div>
+    </div>
+    
+    <script src="nexus.js"></script>
+    <script>
+        // ==================== LOCAL DATA STORE ====================
+        
+        function getCustomers() {
+            return JSON.parse(localStorage.getItem('nexus_customers') || '[]');
+        }
+        
+        function saveCustomers(customers) {
+            localStorage.setItem('nexus_customers', JSON.stringify(customers));
+        }
+        
+        function getSales() {
+            return JSON.parse(localStorage.getItem('nexus_sales') || '[]');
+        }
+        
+        let allCustomers = [];
+        
+        // ==================== CUSTOMER FUNCTIONS ====================
+        
+        function showAddCustomerModal() {
+            const modalHtml = `<div style="padding:10px"><div style="margin-bottom:15px"><label>Full Name *</label><input type="text" id="custName" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border)"></div><div style="margin-bottom:15px"><label>Email</label><input type="email" id="custEmail" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border)"></div><div style="margin-bottom:15px"><label>Phone</label><input type="tel" id="custPhone" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border)"></div><div style="display:flex;gap:15px;justify-content:flex-end"><button onclick="closeModal()" style="padding:10px 20px;border-radius:8px;border:1px solid #ddd;background:white">Cancel</button><button onclick="saveCustomer()" style="padding:10px 20px;border-radius:8px;background:#6B46C1;color:white;border:none">Save</button></div></div>`;
+            const modal = document.createElement('div');
+            modal.id = 'customerModal';
+            modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:10000;display:flex;align-items:center;justify-content:center';
+            modal.innerHTML = `<div style="background:var(--bg-secondary);border-radius:24px;padding:25px;max-width:500px;width:90%"><h3>Add New Customer</h3>${modalHtml}</div>`;
+            document.body.appendChild(modal);
+            window.closeModal = () => { const m = document.getElementById('customerModal'); if(m) m.remove(); };
+        }
+        
+        async function saveCustomer() {
+            const name = document.getElementById('custName')?.value;
+            const email = document.getElementById('custEmail')?.value;
+            const phone = document.getElementById('custPhone')?.value;
+            if (!name) { alert('Please enter customer name'); return; }
+            
+            try {
+                const customers = getCustomers();
+                const newCustomer = {
+                    id: Date.now(),
+                    name, 
+                    email, 
+                    phone, 
+                    total_spent: 0,
+                    orders_count: 0,
+                    created_at: new Date().toISOString()
+                };
+                customers.push(newCustomer);
+                saveCustomers(customers);
+                
+                alert(`✅ CUSTOMER ADDED!\n\nName: ${name}\nEmail: ${email || '-'}\nPhone: ${phone || '-'}`);
+                showThankYouModal(name, email, phone);
+                closeModal();
+                loadCustomers();
+                updateStats();
+            } catch (error) { 
+                alert('Error: ' + error.message); 
+            }
+        }
+        
+        function showThankYouModal(name, email, phone) {
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:10001;display:flex;align-items:center;justify-content:center';
+            modal.innerHTML = `<div style="background:var(--bg-secondary);border-radius:24px;padding:30px;max-width:400px;text-align:center"><i class="fas fa-check-circle" style="font-size:4rem;color:#10b981"></i><h2>Welcome!</h2><p>Customer added successfully</p><div style="background:var(--bg-primary);border-radius:12px;padding:1rem;margin:1rem 0"><p><strong>${escapeHtml(name)}</strong></p><p>${escapeHtml(email || '-')}</p><p>${escapeHtml(phone || '-')}</p></div><button onclick="this.parentElement.parentElement.remove()" style="padding:10px 20px;background:#6B46C1;color:white;border:none;border-radius:8px">Done</button></div>`;
+            document.body.appendChild(modal);
+            setTimeout(() => modal.remove(), 5000);
+        }
+        
+        function loadCustomers() {
+            const customers = getCustomers();
+            const sales = getSales();
+            allCustomers = customers;
+            
+            // Calculate customer stats from sales
+            allCustomers = customers.map(c => {
+                const customerSales = sales.filter(s => s.customer_name === c.name);
+                c.total_spent = customerSales.reduce((sum, s) => sum + (s.total_amount || 0), 0);
+                c.orders_count = customerSales.length;
+                return c;
+            });
+            
+            const tbody = document.getElementById('customersList');
+            if (!tbody) return;
+            if (!allCustomers.length) { 
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">👥 No customers yet. Click "Add Customer" to get started!</td></tr>'; 
+                return; 
+            }
+            tbody.innerHTML = allCustomers.map(c => ` <tr><td style="padding:10px;">#${c.id}</td><td style="padding:10px;"><strong>${escapeHtml(c.name)}</strong></td><td style="padding:10px;">${escapeHtml(c.email || '-')}</td><td style="padding:10px;">${escapeHtml(c.phone || '-')}</td><td style="padding:10px;">KES ${(c.total_spent || 0).toLocaleString()}</td><td style="padding:10px;">${c.orders_count || 0}</td><td style="padding:10px;">${c.created_at ? new Date(c.created_at).toLocaleDateString() : '-'}</td><td style="padding:10px;"><i class="fas fa-trash" style="cursor:pointer;color:#ef4444;" onclick="deleteCustomer(${c.id})"></i></td></tr>`).join('');
+        }
+        
+        function deleteCustomer(id) { 
+            if (!confirm('Delete this customer?')) return; 
+            let customers = getCustomers();
+            customers = customers.filter(c => c.id !== id);
+            saveCustomers(customers);
+            loadCustomers(); 
+            updateStats(); 
+            alert('Customer deleted'); 
+        }
+        
+        function searchCustomers() { 
+            const search = document.getElementById('searchInput')?.value.toLowerCase(); 
+            const rows = document.querySelectorAll('#customersList tr'); 
+            rows.forEach(row => { 
+                const name = row.cells[1]?.textContent.toLowerCase() || ''; 
+                row.style.display = (!search || name.includes(search)) ? '' : 'none'; 
+            }); 
+        }
+        
+        function exportCustomers() {
+            if (!allCustomers.length) { alert('No customers to export'); return; }
+            const headers = ['ID', 'Name', 'Email', 'Phone', 'Total Spent', 'Orders', 'Joined'];
+            const rows = allCustomers.map(c => [c.id, c.name, c.email, c.phone, c.total_spent || 0, c.orders_count || 0, c.created_at ? new Date(c.created_at).toLocaleDateString() : '']);
+            const csv = [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `customers_${new Date().toISOString().split('T')[0]}.csv`; a.click(); URL.revokeObjectURL(a.href);
+            alert('Customers exported!');
+        }
+        
+        function updateStats() {
+            const customers = getCustomers();
+            const sales = getSales();
+            const thisMonth = new Date().getMonth();
+            const newThisMonth = customers.filter(c => new Date(c.created_at).getMonth() === thisMonth).length;
+            const totalValue = sales.reduce((sum, s) => sum + (s.total_amount || 0), 0);
+            
+            document.getElementById('totalCustomers').textContent = customers.length;
+            document.getElementById('newCustomers').textContent = newThisMonth;
+            document.getElementById('lifetimeValue').textContent = 'KES ' + totalValue.toLocaleString();
+        }
+        
+        function escapeHtml(str) { 
+            if (!str) return ''; 
+            return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])); 
+        }
+        
+        // Load on page ready
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCustomers();
+            updateStats();
+        });
+    </script>
+</body>
+</html>

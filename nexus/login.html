@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Login · Bookshop & Cyber</title>
+    <link rel="stylesheet" href="nexus.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="light-mode">
+    <div class="nexus-bg"></div>
+    
+    <div class="nexus-login-container">
+        <div class="nexus-login-card">
+            <div class="nexus-logo">
+                <span class="logo-icon">📚💻</span>
+                <h1>NEXUS<span class="accent">SUITE</span></h1>
+                <p>Books & Cyber · One System</p>
+            </div>
+            
+            <div class="login-tabs">
+                <button class="login-tab active" data-tab="admin">Admin Login</button>
+                <button class="login-tab" data-tab="customer">Customer Portal</button>
+            </div>
+            
+            <div id="adminLogin" class="login-form active">
+                <form id="adminLoginForm">
+                    <div class="form-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" placeholder="Admin Username" id="adminUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" placeholder="Password" id="adminPassword" required>
+                    </div>
+                    <button type="submit" class="btn-login">Access Dashboard</button>
+                </form>
+            </div>
+            
+            <div id="customerLogin" class="login-form">
+                <form id="customerLoginForm">
+                    <div class="form-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" placeholder="Email Address" id="customerEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" placeholder="Password" id="customerPassword" required>
+                    </div>
+                    <button type="submit" class="btn-login">Login to Portal</button>
+                </form>
+                <div class="login-footer">
+                    <a href="#" id="showSignup">Create Account</a>
+                    <a href="#">Forgot Password?</a>
+                </div>
+            </div>
+            
+            <div id="signupForm" class="signup-form" style="display: none;">
+                <form id="customerSignupForm">
+                    <div class="form-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" placeholder="Full Name" id="signupName" required>
+                    </div>
+                    <div class="form-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" placeholder="Email Address" id="signupEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <i class="fas fa-phone"></i>
+                        <input type="tel" placeholder="Phone Number" id="signupPhone" required>
+                    </div>
+                    <div class="form-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" placeholder="Password" id="signupPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" placeholder="Confirm Password" id="signupConfirmPassword" required>
+                    </div>
+                    <button type="submit" class="btn-login">Create Account</button>
+                </form>
+                <div class="login-footer">
+                    <a href="#" id="showLogin">Already have an account? Login</a>
+                </div>
+            </div>
+            <!-- DEVELOPER CREDIT - Tevin Mulinge -->
+<div class="developer-credit">
+    <p>© 2024 Nexus Suite | Developed with <span class="heart">❤️</span> by <a href="#" target="_blank">Tevin Mulinge</a></p>
+    <p style="font-size: 0.7rem; margin-top: 0.25rem;">Intelligent Business Management System</p>
+</div>
+        </div>
+    </div>
+    
+    <script src="nexus-auth.js"></script>
+</body>
+</html>
